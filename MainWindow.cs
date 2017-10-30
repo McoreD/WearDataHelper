@@ -22,12 +22,12 @@ namespace WearDataHelper
 
         public void LoadData()
         {
-            listAttributes.Add(new PumpAttributes() { PartName = "VOLUTE LINER FRONT" });
-            listAttributes.Add(new PumpAttributes() { PartName = "VOLUTE LINER CUTWATER" });
-            listAttributes.Add(new PumpAttributes() { PartName = "IMPELLER FRONT" });
-            listAttributes.Add(new PumpAttributes() { PartName = "IMPELLER SIDE" });
-            listAttributes.Add(new PumpAttributes() { PartName = "THROATBUSH" });
-            listAttributes.Add(new PumpAttributes() { PartName = "FRAME PLATE LINER INSERT" });
+            listAttributes.Add(new PumpAttributes() { PartUniqueID = "VOLUTE LINER FRONT" });
+            listAttributes.Add(new PumpAttributes() { PartUniqueID = "VOLUTE LINER CUTWATER" });
+            listAttributes.Add(new PumpAttributes() { PartUniqueID = "IMPELLER FRONT" });
+            listAttributes.Add(new PumpAttributes() { PartUniqueID = "IMPELLER SIDE" });
+            listAttributes.Add(new PumpAttributes() { PartUniqueID = "THROATBUSH" });
+            listAttributes.Add(new PumpAttributes() { PartUniqueID = "FRAME PLATE LINER INSERT" });
 
             int i = 0, yPos = 72, xOffset = 0;
             foreach (var attrib in listAttributes)
@@ -38,7 +38,7 @@ namespace WearDataHelper
                     yPos = 240;
                 }
 
-                GroupBox gbPart = new GroupBox() { Text = attrib.PartName };
+                GroupBox gbPart = new GroupBox() { Text = attrib.PartUniqueID };
                 gbPart.Size = new Size(200, 150);
 
                 xOffset = i * (gbPart.Width + 16);
@@ -130,11 +130,17 @@ namespace WearDataHelper
                 // 201705 Group 01-1 IMPELLER FRONT.JPG
                 if (File.Exists(attrib.ImageFilePath))
                 {
-                    string fnNew = $"{dtpOH.Value.ToString("yyyyMM")} {txtAssetNum.Text.Trim()} {((PumpAttributes)pbPart.Tag).PartName}";
+                    string fnNew = $"{dtpOH.Value.ToString("yyyyMM")} {txtAssetNum.Text.Trim()} {((PumpAttributes)pbPart.Tag).PartUniqueID}";
                     string fpNew = $"{Path.Combine(Path.GetDirectoryName(attrib.ImageFilePath), fnNew)}{Path.GetExtension(attrib.ImageFilePath)}";
 
                     File.Move(attrib.ImageFilePath, fpNew);
                 }
+            }
+
+            string fpCsv = Path.Combine(Path.GetDirectoryName(listAttributes[0].ImageFilePath), txtAssetNum.Text + ".csv");
+            using (StreamWriter sw = new StreamWriter(fpCsv))
+            {
+                CsvSerializer.Serialize<PumpAttributes>(sw, listAttributes);
             }
         }
     }

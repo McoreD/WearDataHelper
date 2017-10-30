@@ -33,7 +33,7 @@
             this.pgAttributes = new System.Windows.Forms.PropertyGrid();
             this.gbDateOH = new System.Windows.Forms.GroupBox();
             this.dtpOH = new System.Windows.Forms.DateTimePicker();
-            this.btnRename = new System.Windows.Forms.Button();
+            this.btnButton = new System.Windows.Forms.Button();
             this.gbAssetNum.SuspendLayout();
             this.gbDateOH.SuspendLayout();
             this.SuspendLayout();
@@ -82,15 +82,15 @@
             this.dtpOH.Size = new System.Drawing.Size(104, 20);
             this.dtpOH.TabIndex = 0;
             // 
-            // btnRename
+            // btnButton
             // 
-            this.btnRename.Location = new System.Drawing.Point(576, 24);
-            this.btnRename.Name = "btnRename";
-            this.btnRename.Size = new System.Drawing.Size(75, 23);
-            this.btnRename.TabIndex = 12;
-            this.btnRename.Text = "&Rename";
-            this.btnRename.UseVisualStyleBackColor = true;
-            this.btnRename.Click += new System.EventHandler(this.btnRename_Click);
+            this.btnButton.Location = new System.Drawing.Point(328, 24);
+            this.btnButton.Name = "btnButton";
+            this.btnButton.Size = new System.Drawing.Size(323, 23);
+            this.btnButton.TabIndex = 12;
+            this.btnButton.Text = "Rename Photos and Generate Pump Attributes files";
+            this.btnButton.UseVisualStyleBackColor = true;
+            this.btnButton.Click += new System.EventHandler(this.btnRename_Click);
             // 
             // MainWindow
             // 
@@ -99,7 +99,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(663, 652);
-            this.Controls.Add(this.btnRename);
+            this.Controls.Add(this.btnButton);
             this.Controls.Add(this.pgAttributes);
             this.Controls.Add(this.gbDateOH);
             this.Controls.Add(this.gbAssetNum);
@@ -120,7 +120,7 @@
         private System.Windows.Forms.PropertyGrid pgAttributes;
         private System.Windows.Forms.GroupBox gbDateOH;
         private System.Windows.Forms.DateTimePicker dtpOH;
-        private System.Windows.Forms.Button btnRename;
+        private System.Windows.Forms.Button btnButton;
     }
 }
 
