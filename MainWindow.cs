@@ -13,6 +13,7 @@ namespace WearDataHelper
     public partial class MainWindow : Form
     {
         private List<PumpAttributes> listAttributes = new List<PumpAttributes>();
+        private List<PictureBox> listPictureBoxes = new List<PictureBox>();
 
         public MainWindow()
         {
@@ -27,22 +28,47 @@ namespace WearDataHelper
             listAttributes.Add(new PumpAttributes() { PartName = "IMPELLER SIDE" });
             listAttributes.Add(new PumpAttributes() { PartName = "THROATBUSH" });
             listAttributes.Add(new PumpAttributes() { PartName = "FRAME PLATE LINER INSERT" });
+
+            int i = 0, yPos = 72, xOffset = 0;
+            foreach (var attrib in listAttributes)
+            {
+                if (xOffset > 400)
+                {
+                    i = 0;
+                    yPos = 240;
+                }
+
+                GroupBox gbPart = new GroupBox() { Text = attrib.PartName };
+                gbPart.Size = new Size(200, 150);
+
+                xOffset = i * (gbPart.Width + 16);
+                gbPart.Location = new Point(8 + xOffset, yPos);
+
+                PictureBox pictureBox = new PictureBox();
+                pictureBox.Tag = listAttributes[i++];
+                pictureBox.AllowDrop = true;
+                pictureBox.Dock = DockStyle.Fill;
+                pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+                pictureBox.DragEnter += PbPart_DragEnter;
+                pictureBox.DragDrop += PbPart_DragDrop;
+                pictureBox.Click += pbPart_Click;
+                pictureBox.BorderStyle = BorderStyle.FixedSingle;
+                pictureBox.BackColor = SystemColors.ControlDark;
+                pictureBox.Location = new Point(8, 16);
+
+                listPictureBoxes.Add(pictureBox);
+                gbPart.Controls.Add(pictureBox);
+                Controls.Add(gbPart);
+            }
+
+            pgAttributes.Location = new Point(8, yPos + 158);
+
+            pgAttributes.Width = xOffset + listPictureBoxes[listPictureBoxes.Count - 1].Width + 8;
         }
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
             LoadData();
-
-            int i = 0;
-            foreach (PictureBox pbPart in gbPhotos.Controls)
-            {
-                pbPart.Tag = listAttributes[i++];
-                pbPart.AllowDrop = true;
-                pbPart.SizeMode = PictureBoxSizeMode.Zoom;
-                pbPart.DragEnter += PbPart_DragEnter;
-                pbPart.DragDrop += PbPart_DragDrop;
-                pbPart.Click += pbPart_Click;
-            }
         }
 
         private void PbPart_DragDrop(object sender, DragEventArgs e)
@@ -78,8 +104,12 @@ namespace WearDataHelper
 
         private void pbPart_Click(object sender, EventArgs e)
         {
-            PictureBox pb = sender as PictureBox;
+            foreach (PictureBox item in listPictureBoxes)
+            {
+                item.BorderStyle = BorderStyle.FixedSingle;
+            }
 
+            PictureBox pb = sender as PictureBox;
             pb.BorderStyle = BorderStyle.Fixed3D;
             pgAttributes.SelectedObject = pb.Tag as PumpAttributes;
         }
@@ -93,7 +123,7 @@ namespace WearDataHelper
                 return;
             }
 
-            foreach (PictureBox pbPart in gbPhotos.Controls)
+            foreach (PictureBox pbPart in listPictureBoxes)
             {
                 PumpAttributes attrib = pbPart.Tag as PumpAttributes;
 
@@ -102,7 +132,7 @@ namespace WearDataHelper
                 {
                     string fnNew = $"{dtpOH.Value.ToString("yyyyMM")} {txtAssetNum.Text.Trim()} {((PumpAttributes)pbPart.Tag).PartName}";
                     string fpNew = $"{Path.Combine(Path.GetDirectoryName(attrib.ImageFilePath), fnNew)}{Path.GetExtension(attrib.ImageFilePath)}";
-                    MessageBox.Show(fpNew);
+
                     File.Move(attrib.ImageFilePath, fpNew);
                 }
             }
