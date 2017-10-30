@@ -173,6 +173,7 @@
             // 
             // txtPart1
             // 
+            this.txtPart1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtPart1.Location = new System.Drawing.Point(16, 96);
             this.txtPart1.Name = "txtPart1";
             this.txtPart1.Size = new System.Drawing.Size(192, 20);
@@ -247,7 +248,8 @@
             this.Controls.Add(this.gbPhotos);
             this.Controls.Add(this.gbAssetNum);
             this.Name = "MainWindow";
-            this.Text = "Form1";
+            this.Text = "Wear Data Helper";
+            this.TopMost = true;
             this.Load += new System.EventHandler(this.MainWindow_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pbPart1)).EndInit();
             this.gbAssetNum.ResumeLayout(false);
