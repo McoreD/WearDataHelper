@@ -26,7 +26,6 @@ namespace WearDataHelper
                 from mi in typeof(T).GetMembers(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
                 where new[] { MemberTypes.Field, MemberTypes.Property }.Contains(mi.MemberType)
                 let orderAttr = (ColumnOrderAttribute)Attribute.GetCustomAttribute(mi, typeof(ColumnOrderAttribute))
-                orderby orderAttr == null ? int.MaxValue : orderAttr.Order, mi.Name
                 select mi;
             output.WriteLine(QuoteRecord(fields.Select(f => f.Name)));
             foreach (var record in objects)

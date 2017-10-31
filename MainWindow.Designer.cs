@@ -84,7 +84,7 @@
             // 
             // btnButton
             // 
-            this.btnButton.Location = new System.Drawing.Point(328, 24);
+            this.btnButton.Location = new System.Drawing.Point(328, 16);
             this.btnButton.Name = "btnButton";
             this.btnButton.Size = new System.Drawing.Size(323, 23);
             this.btnButton.TabIndex = 12;
@@ -105,7 +105,6 @@
             this.Controls.Add(this.gbAssetNum);
             this.Name = "MainWindow";
             this.Text = "Wear Data Helper";
-            this.TopMost = true;
             this.Load += new System.EventHandler(this.MainWindow_Load);
             this.gbAssetNum.ResumeLayout(false);
             this.gbAssetNum.PerformLayout();

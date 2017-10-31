@@ -22,30 +22,30 @@ namespace WearDataHelper
 
         public void LoadData()
         {
-            listAttributes.Add(new PumpAttributes() { PartUniqueID = "VOLUTE LINER FRONT" });
-            listAttributes.Add(new PumpAttributes() { PartUniqueID = "VOLUTE LINER CUTWATER" });
-            listAttributes.Add(new PumpAttributes() { PartUniqueID = "IMPELLER FRONT" });
-            listAttributes.Add(new PumpAttributes() { PartUniqueID = "IMPELLER SIDE" });
-            listAttributes.Add(new PumpAttributes() { PartUniqueID = "THROATBUSH" });
-            listAttributes.Add(new PumpAttributes() { PartUniqueID = "FRAME PLATE LINER INSERT" });
+            listAttributes.Add(new PumpAttributes() { PartName = "VOLUTE LINER FRONT" });
+            listAttributes.Add(new PumpAttributes() { PartName = "VOLUTE LINER CUTWATER" });
+            listAttributes.Add(new PumpAttributes() { PartName = "IMPELLER FRONT" });
+            listAttributes.Add(new PumpAttributes() { PartName = "IMPELLER SIDE" });
+            listAttributes.Add(new PumpAttributes() { PartName = "THROATBUSH" });
+            listAttributes.Add(new PumpAttributes() { PartName = "FRAME PLATE LINER INSERT" });
 
-            int i = 0, yPos = 72, xOffset = 0;
+            int xPos = 0, yPos = 72, xOffset = 0, count = 0;
             foreach (var attrib in listAttributes)
             {
                 if (xOffset > 400)
                 {
-                    i = 0;
+                    xPos = 0;
                     yPos = 240;
                 }
 
-                GroupBox gbPart = new GroupBox() { Text = attrib.PartUniqueID };
+                GroupBox gbPart = new GroupBox() { Text = attrib.PartName };
                 gbPart.Size = new Size(200, 150);
 
-                xOffset = i * (gbPart.Width + 16);
+                xOffset = xPos++ * (gbPart.Width + 16);
                 gbPart.Location = new Point(8 + xOffset, yPos);
 
                 PictureBox pictureBox = new PictureBox();
-                pictureBox.Tag = listAttributes[i++];
+                pictureBox.Tag = count++;
                 pictureBox.AllowDrop = true;
                 pictureBox.Dock = DockStyle.Fill;
                 pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
@@ -53,8 +53,17 @@ namespace WearDataHelper
                 pictureBox.DragDrop += PbPart_DragDrop;
                 pictureBox.Click += pbPart_Click;
                 pictureBox.BorderStyle = BorderStyle.FixedSingle;
-                pictureBox.BackColor = SystemColors.ControlDark;
+                // pictureBox.BackColor = SystemColors.ControlDark;
                 pictureBox.Location = new Point(8, 16);
+
+                Bitmap bmp = new Bitmap(pictureBox.Width, pictureBox.Height);
+                using (Graphics g = Graphics.FromImage(bmp))
+                {
+                    Font font = new Font("Microsoft Sans Serif", 11, FontStyle.Regular, GraphicsUnit.Point);
+                    g.Clear(Color.White);
+                    g.DrawString("Drag and drop\nphoto here...", font, Brushes.Gray, 0, 0);
+                }
+                pictureBox.Image = bmp;
 
                 listPictureBoxes.Add(pictureBox);
                 gbPart.Controls.Add(pictureBox);
@@ -75,7 +84,7 @@ namespace WearDataHelper
         {
             PictureBox pbPart = sender as PictureBox;
             var files = e.Data.GetData(DataFormats.FileDrop, false) as string[];
-            PumpAttributes attributes = pbPart.Tag as PumpAttributes;
+            PumpAttributes attributes = listAttributes[(int)pbPart.Tag];
 
             attributes.ImageFilePath = files[0];
             if (string.IsNullOrEmpty(txtAssetNum.Text))
@@ -111,7 +120,7 @@ namespace WearDataHelper
 
             PictureBox pb = sender as PictureBox;
             pb.BorderStyle = BorderStyle.Fixed3D;
-            pgAttributes.SelectedObject = pb.Tag as PumpAttributes;
+            pgAttributes.SelectedObject = listAttributes[(int)pb.Tag];
         }
 
         private void btnRename_Click(object sender, EventArgs e)
@@ -123,21 +132,22 @@ namespace WearDataHelper
                 return;
             }
 
-            foreach (PictureBox pbPart in listPictureBoxes)
+            foreach (PumpAttributes attrib in listAttributes)
             {
-                PumpAttributes attrib = pbPart.Tag as PumpAttributes;
-
                 // 201705 Group 01-1 IMPELLER FRONT.JPG
                 if (File.Exists(attrib.ImageFilePath))
                 {
-                    string fnNew = $"{dtpOH.Value.ToString("yyyyMM")} {txtAssetNum.Text.Trim()} {((PumpAttributes)pbPart.Tag).PartUniqueID}";
-                    string fpNew = $"{Path.Combine(Path.GetDirectoryName(attrib.ImageFilePath), fnNew)}{Path.GetExtension(attrib.ImageFilePath)}";
+                    attrib.DateOverhaul = dtpOH.Value.ToShortDateString();
+                    attrib.PartUniqueID = $"{dtpOH.Value.ToString("yyyyMM")} {txtAssetNum.Text.Trim()} {attrib.PartName}";
+                    string fpNew = $"{Path.Combine(Path.GetDirectoryName(attrib.ImageFilePath), attrib.PartUniqueID)}{Path.GetExtension(attrib.ImageFilePath)}";
 
+                    if (File.Exists(fpNew)) File.Delete(fpNew);
                     File.Move(attrib.ImageFilePath, fpNew);
                 }
             }
 
             string fpCsv = Path.Combine(Path.GetDirectoryName(listAttributes[0].ImageFilePath), txtAssetNum.Text + ".csv");
+            if (File.Exists(fpCsv)) File.Delete(fpCsv);
             using (StreamWriter sw = new StreamWriter(fpCsv))
             {
                 CsvSerializer.Serialize<PumpAttributes>(sw, listAttributes);
