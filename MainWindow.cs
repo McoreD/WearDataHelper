@@ -128,7 +128,13 @@ namespace WearDataHelper
             // error checking
             if (string.IsNullOrEmpty(txtAssetNum.Text))
             {
-                MessageBox.Show("Asset # is empty.");
+                MessageBox.Show("Asset Number is empty.");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(txtWorkOrderNum.Text))
+            {
+                MessageBox.Show("Work Order Number is empty.");
                 return;
             }
 
@@ -139,13 +145,21 @@ namespace WearDataHelper
                 {
                     attrib.DateOverhaul = dtpOH.Value.ToShortDateString();
                     attrib.PartUniqueID = $"{dtpOH.Value.ToString("yyyyMM")} {txtAssetNum.Text.Trim()} {attrib.PartName}";
+                    attrib.WorkOrderNumber = txtWorkOrderNum.Text;
                     string fpNew = $"{Path.Combine(Path.GetDirectoryName(attrib.ImageFilePath), attrib.PartUniqueID)}{Path.GetExtension(attrib.ImageFilePath)}";
 
-                    if (File.Exists(fpNew)) File.Delete(fpNew);
-                    File.Move(attrib.ImageFilePath, fpNew);
+                    if (File.Exists(fpNew) && !fpNew.Equals(attrib.ImageFilePath, StringComparison.OrdinalIgnoreCase))
+                    {
+                        // do not delete if the old file name is exactly as new
+                        File.Delete(fpNew);
+                        File.Move(attrib.ImageFilePath, fpNew);
+                    }
                 }
             }
+        }
 
+        private void btnCreateCsv_Click(object sender, EventArgs e)
+        {
             string fpCsv = Path.Combine(Path.GetDirectoryName(listAttributes[0].ImageFilePath), txtAssetNum.Text + ".csv");
             if (File.Exists(fpCsv)) File.Delete(fpCsv);
             using (StreamWriter sw = new StreamWriter(fpCsv))

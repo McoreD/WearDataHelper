@@ -33,9 +33,13 @@
             this.pgAttributes = new System.Windows.Forms.PropertyGrid();
             this.gbDateOH = new System.Windows.Forms.GroupBox();
             this.dtpOH = new System.Windows.Forms.DateTimePicker();
-            this.btnButton = new System.Windows.Forms.Button();
+            this.btnRename = new System.Windows.Forms.Button();
+            this.btnCreateCsv = new System.Windows.Forms.Button();
+            this.gbWorkOrderNum = new System.Windows.Forms.GroupBox();
+            this.txtWorkOrderNum = new System.Windows.Forms.TextBox();
             this.gbAssetNum.SuspendLayout();
             this.gbDateOH.SuspendLayout();
+            this.gbWorkOrderNum.SuspendLayout();
             this.SuspendLayout();
             // 
             // gbAssetNum
@@ -82,15 +86,42 @@
             this.dtpOH.Size = new System.Drawing.Size(104, 20);
             this.dtpOH.TabIndex = 0;
             // 
-            // btnButton
+            // btnRename
             // 
-            this.btnButton.Location = new System.Drawing.Point(328, 16);
-            this.btnButton.Name = "btnButton";
-            this.btnButton.Size = new System.Drawing.Size(323, 23);
-            this.btnButton.TabIndex = 12;
-            this.btnButton.Text = "Rename Photos and Generate Pump Attributes files";
-            this.btnButton.UseVisualStyleBackColor = true;
-            this.btnButton.Click += new System.EventHandler(this.btnRename_Click);
+            this.btnRename.Location = new System.Drawing.Point(496, 8);
+            this.btnRename.Name = "btnRename";
+            this.btnRename.Size = new System.Drawing.Size(152, 23);
+            this.btnRename.TabIndex = 12;
+            this.btnRename.Text = "Rename Photos";
+            this.btnRename.UseVisualStyleBackColor = true;
+            this.btnRename.Click += new System.EventHandler(this.btnRename_Click);
+            // 
+            // btnCreateCsv
+            // 
+            this.btnCreateCsv.Location = new System.Drawing.Point(496, 40);
+            this.btnCreateCsv.Name = "btnCreateCsv";
+            this.btnCreateCsv.Size = new System.Drawing.Size(155, 23);
+            this.btnCreateCsv.TabIndex = 13;
+            this.btnCreateCsv.Text = "Generate Pump Attributes file";
+            this.btnCreateCsv.UseVisualStyleBackColor = true;
+            this.btnCreateCsv.Click += new System.EventHandler(this.btnCreateCsv_Click);
+            // 
+            // gbWorkOrderNum
+            // 
+            this.gbWorkOrderNum.Controls.Add(this.txtWorkOrderNum);
+            this.gbWorkOrderNum.Location = new System.Drawing.Point(320, 8);
+            this.gbWorkOrderNum.Name = "gbWorkOrderNum";
+            this.gbWorkOrderNum.Size = new System.Drawing.Size(160, 56);
+            this.gbWorkOrderNum.TabIndex = 2;
+            this.gbWorkOrderNum.TabStop = false;
+            this.gbWorkOrderNum.Text = "Work Order #";
+            // 
+            // txtWorkOrderNum
+            // 
+            this.txtWorkOrderNum.Location = new System.Drawing.Point(8, 24);
+            this.txtWorkOrderNum.Name = "txtWorkOrderNum";
+            this.txtWorkOrderNum.Size = new System.Drawing.Size(136, 20);
+            this.txtWorkOrderNum.TabIndex = 0;
             // 
             // MainWindow
             // 
@@ -99,7 +130,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(663, 652);
-            this.Controls.Add(this.btnButton);
+            this.Controls.Add(this.gbWorkOrderNum);
+            this.Controls.Add(this.btnCreateCsv);
+            this.Controls.Add(this.btnRename);
             this.Controls.Add(this.pgAttributes);
             this.Controls.Add(this.gbDateOH);
             this.Controls.Add(this.gbAssetNum);
@@ -109,6 +142,8 @@
             this.gbAssetNum.ResumeLayout(false);
             this.gbAssetNum.PerformLayout();
             this.gbDateOH.ResumeLayout(false);
+            this.gbWorkOrderNum.ResumeLayout(false);
+            this.gbWorkOrderNum.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -119,7 +154,10 @@
         private System.Windows.Forms.PropertyGrid pgAttributes;
         private System.Windows.Forms.GroupBox gbDateOH;
         private System.Windows.Forms.DateTimePicker dtpOH;
-        private System.Windows.Forms.Button btnButton;
+        private System.Windows.Forms.Button btnRename;
+        private System.Windows.Forms.Button btnCreateCsv;
+        private System.Windows.Forms.GroupBox gbWorkOrderNum;
+        private System.Windows.Forms.TextBox txtWorkOrderNum;
     }
 }
 
