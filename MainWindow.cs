@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.FileIO;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,6 +13,9 @@ namespace WearDataHelper
 {
     public partial class MainWindow : Form
     {
+        private string dirPhotos;
+        private string dirPumpGroup;
+
         private List<PumpAttributes> listAttributes = new List<PumpAttributes>();
         private List<PictureBox> listPictureBoxes = new List<PictureBox>();
 
@@ -70,14 +74,59 @@ namespace WearDataHelper
                 Controls.Add(gbPart);
             }
 
-            pgAttributes.Location = new Point(8, yPos + 158);
+            gbAttributes.Location = new Point(8, yPos + 158);
 
-            pgAttributes.Width = xOffset + listPictureBoxes[listPictureBoxes.Count - 1].Width + 8;
+            gbAttributes.Width = xOffset + listPictureBoxes[listPictureBoxes.Count - 1].Width + 8;
+        }
+
+        private void ReadCsv(string filePath)
+        {
+            if (!File.Exists(filePath))
+                return;
+
+            using (TextFieldParser parser = new TextFieldParser(filePath))
+            {
+                parser.TextFieldType = FieldType.Delimited;
+                parser.SetDelimiters(",");
+                int row = 0, col = 0;
+                while (!parser.EndOfData)
+                {
+                    //Processing row
+                    string[] columns = parser.ReadFields();
+                    foreach (string columnText in columns)
+                    {
+                        if (row > 0)
+                        {
+                            if (col == 0)
+                                listAttributes[row - 1].PartUniqueID = columnText;
+                            if (col == 1)
+                                listAttributes[row - 1].WorkOrderNumber = columnText;
+                            if (col == 2)
+                                listAttributes[row - 1].ResidualLife = columnText;
+                            if (col == 3)
+                                listAttributes[row - 1].PumpServiceLife = columnText;
+                            if (col == 4)
+                                listAttributes[row - 1].Notes = columnText;
+                            if (col == 5)
+                                listAttributes[row - 1].DateOverhaul = columnText;
+                            col++;
+                        }
+                    }
+                    row++;
+                    col = 0;
+                }
+            }
         }
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
             LoadData();
+        }
+
+        private void UpdateDirPumpGroup()
+        {
+            if (!string.IsNullOrEmpty(dirPhotos))
+                dirPumpGroup = Path.Combine(dirPhotos, Path.Combine(dtpOH.Value.ToString("yyyy-MM"), txtAssetNum.Text));
         }
 
         private void PbPart_DragDrop(object sender, DragEventArgs e)
@@ -87,10 +136,13 @@ namespace WearDataHelper
             PumpAttributes attributes = listAttributes[(int)pbPart.Tag];
 
             attributes.ImageFilePath = files[0];
-            if (string.IsNullOrEmpty(txtAssetNum.Text))
+
+            if (!Directory.Exists(dirPumpGroup))
             {
-                txtAssetNum.Text = Path.GetFileName(Path.GetDirectoryName(files[0]));
+                dirPhotos = Path.GetDirectoryName(files[0]); // Photos folders
+                UpdateDirPumpGroup();
             }
+
             using (var img = Image.FromFile(attributes.ImageFilePath))
             {
                 pbPart.Image = new Bitmap(img);
@@ -138,34 +190,82 @@ namespace WearDataHelper
                 return;
             }
 
+            if (!Directory.Exists(dirPumpGroup))
+                Directory.CreateDirectory(dirPumpGroup);
+
             foreach (PumpAttributes attrib in listAttributes)
             {
                 // 201705 Group 01-1 IMPELLER FRONT.JPG
                 if (File.Exists(attrib.ImageFilePath))
                 {
+                    string fpOld = attrib.ImageFilePath;
                     attrib.DateOverhaul = dtpOH.Value.ToShortDateString();
                     attrib.PartUniqueID = $"{dtpOH.Value.ToString("yyyyMM")} {txtAssetNum.Text.Trim()} {attrib.PartName}";
                     attrib.WorkOrderNumber = txtWorkOrderNum.Text;
-                    string fpNew = $"{Path.Combine(Path.GetDirectoryName(attrib.ImageFilePath), attrib.PartUniqueID)}{Path.GetExtension(attrib.ImageFilePath)}";
+                    string fpNew = $"{Path.Combine(dirPumpGroup, attrib.PartUniqueID)}{Path.GetExtension(fpOld)}";
 
-                    if (File.Exists(fpNew) && !fpNew.Equals(attrib.ImageFilePath, StringComparison.OrdinalIgnoreCase))
+                    if (File.Exists(fpNew))
                     {
                         // do not delete if the old file name is exactly as new
-                        File.Delete(fpNew);
-                        File.Move(attrib.ImageFilePath, fpNew);
+                        File.Replace(fpOld, fpNew, Path.Combine(Path.GetDirectoryName(fpNew), $"Old-{Path.GetFileName(fpNew)}"));
                     }
+                    else
+                    {
+                        File.Move(fpOld, fpNew);
+                    }
+
+                    attrib.ImageFilePath = fpNew;
                 }
             }
         }
 
+        private string getCsvFilePath()
+        {
+            return Path.Combine(dirPumpGroup, txtAssetNum.Text + ".csv");
+        }
+
         private void btnCreateCsv_Click(object sender, EventArgs e)
         {
-            string fpCsv = Path.Combine(Path.GetDirectoryName(listAttributes[0].ImageFilePath), txtAssetNum.Text + ".csv");
+            // error checking
+            if (string.IsNullOrEmpty(dirPumpGroup))
+            {
+                MessageBox.Show("Please drag and drop photos first.");
+                return;
+            }
+            if (!string.IsNullOrEmpty(dirPumpGroup) && !Directory.Exists(dirPumpGroup))
+            {
+                Directory.CreateDirectory(dirPumpGroup);
+            }
+
+            string fpCsv = getCsvFilePath();
+
             if (File.Exists(fpCsv)) File.Delete(fpCsv);
+
             using (StreamWriter sw = new StreamWriter(fpCsv))
             {
                 CsvSerializer.Serialize<PumpAttributes>(sw, listAttributes);
             }
+        }
+
+        private void btnCsvRead_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.InitialDirectory = dirPumpGroup;
+            dlg.Filter = "Comma Separated Values (*.csv)|*.csv";
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                ReadCsv(dlg.FileName);
+            }
+        }
+
+        private void txtAssetNum_TextChanged(object sender, EventArgs e)
+        {
+            UpdateDirPumpGroup();
+        }
+
+        private void dtpOH_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateDirPumpGroup();
         }
     }
 }
