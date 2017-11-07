@@ -165,6 +165,7 @@
             this.Controls.Add(this.gbDateOH);
             this.Controls.Add(this.gbAssetNum);
             this.Name = "MainWindow";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Wear Data Helper";
             this.Load += new System.EventHandler(this.MainWindow_Load);
             this.gbAssetNum.ResumeLayout(false);
