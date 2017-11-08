@@ -57,7 +57,7 @@ namespace WearDataHelper
                 pictureBox.DragDrop += PbPart_DragDrop;
                 pictureBox.Click += pbPart_Click;
                 pictureBox.BorderStyle = BorderStyle.FixedSingle;
-                // pictureBox.BackColor = SystemColors.ControlDark;
+                pictureBox.BackColor = Color.White;
                 pictureBox.Location = new Point(8, 16);
 
                 Bitmap bmp = new Bitmap(pictureBox.Width, pictureBox.Height);
@@ -180,13 +180,13 @@ namespace WearDataHelper
             // error checking
             if (string.IsNullOrEmpty(txtAssetNum.Text))
             {
-                MessageBox.Show("Asset Number is empty.");
+                MessageBox.Show("Asset Number is empty.", Application.ProductName);
                 return;
             }
 
             if (string.IsNullOrEmpty(txtWorkOrderNum.Text))
             {
-                MessageBox.Show("Work Order Number is empty.");
+                MessageBox.Show("Work Order Number is empty.", Application.ProductName);
                 return;
             }
 
@@ -229,7 +229,7 @@ namespace WearDataHelper
             // error checking
             if (string.IsNullOrEmpty(dirPumpGroup))
             {
-                MessageBox.Show("Please drag and drop photos first.");
+                MessageBox.Show("Please drag and drop photos first.", Application.ProductName);
                 return;
             }
             if (!string.IsNullOrEmpty(dirPumpGroup) && !Directory.Exists(dirPumpGroup))
