@@ -139,7 +139,7 @@ namespace WearDataHelper
 
             if (!Directory.Exists(dirPumpGroup))
             {
-                dirPhotos = Path.GetDirectoryName(files[0]); // Photos folders
+                dirPhotos = Path.GetDirectoryName(files[0]); // Photos folder
                 UpdateDirPumpGroup();
             }
 
@@ -224,7 +224,7 @@ namespace WearDataHelper
             return Path.Combine(dirPumpGroup, txtAssetNum.Text + ".csv");
         }
 
-        private void btnCreateCsv_Click(object sender, EventArgs e)
+        private void BtnCreateCsv_Click(object sender, EventArgs e)
         {
             // error checking
             if (string.IsNullOrEmpty(dirPumpGroup))

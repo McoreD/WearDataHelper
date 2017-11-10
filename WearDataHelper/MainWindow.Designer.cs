@@ -111,7 +111,7 @@
             this.btnCreateCsv.TabIndex = 1;
             this.btnCreateCsv.Text = "Generate Attributes file";
             this.btnCreateCsv.UseVisualStyleBackColor = true;
-            this.btnCreateCsv.Click += new System.EventHandler(this.btnCreateCsv_Click);
+            this.btnCreateCsv.Click += new System.EventHandler(this.BtnCreateCsv_Click);
             // 
             // gbWorkOrderNum
             // 
