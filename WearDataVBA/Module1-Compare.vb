@@ -1,12 +1,16 @@
 ﻿
+
 Sub UpdatePictures()
 
     Dim pictureNameRow As Long 'row where picture name is found
     Dim picturePasteRow As Long 'row where picture is to be pasted
     Dim pictureName As String 'picture name
-    Dim lastPictureColumn As Long 'last column in use where picture names are
+
     Dim pictureColumn As Long 'current picture column to be processed
     Dim dirPictures As String 'dir path of pictures
+
+    Dim rowPhotoName As Integer
+    Dim colPhotoName As Integer
 
     Dim dirPicturesSubDir As String
 
@@ -16,53 +20,60 @@ Sub UpdatePictures()
     picturePasteRow = 7
     pictureColumn = 2
 
-    lastPictureColumn = 7 ' Worksheets("WearInfo").Cells(pictureNameRow, Columns.Count).End(xlToLeft).Column
+    rowPhotoName = 19
+    colPhotoName = 1
+
     Application.ScreenUpdating = False
 
-    Do While (pictureColumn <= lastPictureColumn)
+    Worksheets("Check List Report").Activate
 
-        On Error GoTo Try_Next
+    For rowPhotoName = 19 To 49 Step 6
 
-        dirPicturesSubDir = Year(Worksheets("WearInfo").Cells(pictureNameRow - 3, pictureColumn).Value) & "-" &
-        Format(Month(Worksheets("WearInfo").Cells(pictureNameRow - 3, pictureColumn).Value), "00") & "\" &
-        Worksheets("WearInfo").Cells(pictureNameRow - 2, pictureColumn).Value
+        For colPhotoName = 1 To 11 Step 5
 
-        dirPictures = ActiveWorkbook.Path + "\Photos\" + dirPicturesSubDir + "\" 'important to end with a "\"
+            dirPicturesSubDir = Year(Worksheets("Check List Report").Cells(18, colPhotoName + 1).Value) & "-" &
+            Format(Month(Worksheets("Check List Report").Cells(18, colPhotoName + 1).Value), "00") & "\" &
+            Worksheets("Check List Report").Cells(9, 2).Value
 
-        pictureName = Worksheets("WearInfo").Cells(pictureNameRow, pictureColumn).Value
+            dirPictures = ActiveWorkbook.Path + "\Photos\" + dirPicturesSubDir + "\" 'important to end with a "\"
 
-        If (pictureName <> vbNullString) Then
+            pictureName = Worksheets("Check List Report").Cells(rowPhotoName, colPhotoName).Value
 
-            pathPicture = dirPictures & pictureName & ".jpg"
+            If (pictureName <> vbNullString) Then
 
-            If FileExists(pathPicture) Then
+                pathPicture = dirPictures & pictureName & ".jpg"
 
-                Worksheets("WearInfo").Activate
-                Worksheets("WearInfo").Cells(picturePasteRow, pictureColumn).Select
-                DeletePicture(Cells(picturePasteRow, pictureColumn))
-                ActiveSheet.Pictures.insert(pathPicture).Select
+                If FileExists(pathPicture) Then
 
-                With Selection
-                    .Left = Cells(picturePasteRow, pictureColumn).Left
-                    .Top = Cells(picturePasteRow, pictureColumn).Top
-                    '.ShapeRange.LockAspectRatio = msoFalse
-                    .ShapeRange.Height = 100.0#
-                    .ShapeRange.Width = .TopLeftCell.Width
-                    .ShapeRange.Rotation = 0#
-                End With
+                    Dim rowPhoto As Integer
+                    rowPhoto = rowPhotoName + 1
 
+                    ActiveSheet.Cells(rowPhoto, colPhotoName).Select
+
+                    DeletePicture(Cells(rowPhoto, colPhotoName))
+
+                    With ActiveSheet.Pictures.Insert(pathPicture)
+                        With .ShapeRange
+                            .LockAspectRatio = msoTrue
+                            .Width = 33
+                            .Height = 135
+                            .Rotation = 0
+                        End With
+                        .Left = ActiveSheet.Cells(rowPhoto, colPhotoName).Left
+                        .Top = ActiveSheet.Cells(rowPhoto, colPhotoName).Top
+                        .Placement = 1
+                        .PrintObject = True
+                    End With
+
+                End If
 
             End If
-        Else
 
-        End If
 
-Try_Next:
-        pictureColumn = pictureColumn + 1
+        Next
 
-    Loop
+    Next
 
-    Worksheets("Check List Report").Activate
 
 Exit_Sub:
 
@@ -90,7 +101,6 @@ Sub DeletePicture(curcell As Range)
 Err_DeletePicture:
     Exit Sub
 End Sub
-
 
 
 

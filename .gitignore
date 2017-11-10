@@ -294,3 +294,5 @@ Lib/ffmpeg.exe
 Lib/ffmpeg-x64.exe
 *.ide
 .vs/WearDataHelper/v15/.suo
+*.ide
+.vs/WearDataHelper/v15/.suo
