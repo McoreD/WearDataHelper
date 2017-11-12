@@ -74,9 +74,10 @@ namespace WearDataHelper
                 Controls.Add(gbPart);
             }
 
-            gbAttributes.Location = new Point(8, yPos + 158);
+            gbRecommendations.Location = new Point(8, yPos + 158);
+            gbAttributes.Location = new Point(8, gbRecommendations.Location.Y + gbRecommendations.Height + 8);
 
-            gbAttributes.Width = xOffset + listPictureBoxes[listPictureBoxes.Count - 1].Width + 8;
+            gbRecommendations.Width = gbAttributes.Width = xOffset + listPictureBoxes[listPictureBoxes.Count - 1].Width + 8;
         }
 
         private void ReadCsv(string filePath)
@@ -202,6 +203,7 @@ namespace WearDataHelper
                     attrib.DateOverhaul = dtpOH.Value.ToShortDateString();
                     attrib.PartUniqueID = $"{dtpOH.Value.ToString("yyyyMM")} {txtAssetNum.Text.Trim()} {attrib.PartName}";
                     attrib.WorkOrderNumber = txtWorkOrderNum.Text;
+                    attrib.Recommendations = txtRecommedations.Text;
                     string fpNew = $"{Path.Combine(dirPumpGroup, attrib.PartUniqueID)}{Path.GetExtension(fpOld)}";
 
                     if (File.Exists(fpNew))

@@ -39,10 +39,13 @@
             this.txtWorkOrderNum = new System.Windows.Forms.TextBox();
             this.gbAttributes = new System.Windows.Forms.GroupBox();
             this.btnCsvRead = new System.Windows.Forms.Button();
+            this.gbRecommendations = new System.Windows.Forms.GroupBox();
+            this.txtRecommedations = new System.Windows.Forms.TextBox();
             this.gbAssetNum.SuspendLayout();
             this.gbDateOH.SuspendLayout();
             this.gbWorkOrderNum.SuspendLayout();
             this.gbAttributes.SuspendLayout();
+            this.gbRecommendations.SuspendLayout();
             this.SuspendLayout();
             // 
             // gbAssetNum
@@ -135,7 +138,7 @@
             this.gbAttributes.Controls.Add(this.btnCsvRead);
             this.gbAttributes.Controls.Add(this.pgAttributes);
             this.gbAttributes.Controls.Add(this.btnCreateCsv);
-            this.gbAttributes.Location = new System.Drawing.Point(8, 328);
+            this.gbAttributes.Location = new System.Drawing.Point(8, 400);
             this.gbAttributes.Name = "gbAttributes";
             this.gbAttributes.Size = new System.Drawing.Size(616, 312);
             this.gbAttributes.TabIndex = 4;
@@ -152,13 +155,33 @@
             this.btnCsvRead.UseVisualStyleBackColor = true;
             this.btnCsvRead.Click += new System.EventHandler(this.btnCsvRead_Click);
             // 
+            // gbRecommendations
+            // 
+            this.gbRecommendations.Controls.Add(this.txtRecommedations);
+            this.gbRecommendations.Location = new System.Drawing.Point(8, 320);
+            this.gbRecommendations.Name = "gbRecommendations";
+            this.gbRecommendations.Size = new System.Drawing.Size(616, 76);
+            this.gbRecommendations.TabIndex = 5;
+            this.gbRecommendations.TabStop = false;
+            this.gbRecommendations.Text = "Recommendations";
+            // 
+            // txtRecommedations
+            // 
+            this.txtRecommedations.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtRecommedations.Location = new System.Drawing.Point(3, 16);
+            this.txtRecommedations.Multiline = true;
+            this.txtRecommedations.Name = "txtRecommedations";
+            this.txtRecommedations.Size = new System.Drawing.Size(610, 57);
+            this.txtRecommedations.TabIndex = 0;
+            // 
             // MainWindow
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(663, 652);
+            this.ClientSize = new System.Drawing.Size(663, 721);
+            this.Controls.Add(this.gbRecommendations);
             this.Controls.Add(this.gbAttributes);
             this.Controls.Add(this.gbWorkOrderNum);
             this.Controls.Add(this.btnRename);
@@ -174,6 +197,8 @@
             this.gbWorkOrderNum.ResumeLayout(false);
             this.gbWorkOrderNum.PerformLayout();
             this.gbAttributes.ResumeLayout(false);
+            this.gbRecommendations.ResumeLayout(false);
+            this.gbRecommendations.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -190,6 +215,8 @@
         private System.Windows.Forms.TextBox txtWorkOrderNum;
         private System.Windows.Forms.GroupBox gbAttributes;
         private System.Windows.Forms.Button btnCsvRead;
+        private System.Windows.Forms.GroupBox gbRecommendations;
+        private System.Windows.Forms.TextBox txtRecommedations;
     }
 }
 

@@ -14,8 +14,10 @@ namespace WearDataHelper
         [Description("Residual Life in hours")]
         public string ResidualLife { get; set; }
 
+        [Description("Pump Service Life in hours")]
         public string PumpServiceLife { get; set; }
         public string Notes { get; set; }
+        public string Recommendations { get; set; }
 
         [Browsable(false)]
         public string DateOverhaul { get; set; }
