@@ -76,6 +76,7 @@
             this.pgAttributes.Size = new System.Drawing.Size(584, 240);
             this.pgAttributes.TabIndex = 2;
             this.pgAttributes.ToolbarVisible = false;
+            this.pgAttributes.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.pgAttributes_PropertyValueChanged);
             // 
             // gbDateOH
             // 
@@ -141,7 +142,7 @@
             this.gbAttributes.Location = new System.Drawing.Point(8, 400);
             this.gbAttributes.Name = "gbAttributes";
             this.gbAttributes.Size = new System.Drawing.Size(616, 312);
-            this.gbAttributes.TabIndex = 4;
+            this.gbAttributes.TabIndex = 5;
             this.gbAttributes.TabStop = false;
             this.gbAttributes.Text = "Pump Attributes - click on each pump part above and enter attributes below";
             // 
@@ -161,7 +162,7 @@
             this.gbRecommendations.Location = new System.Drawing.Point(8, 320);
             this.gbRecommendations.Name = "gbRecommendations";
             this.gbRecommendations.Size = new System.Drawing.Size(616, 76);
-            this.gbRecommendations.TabIndex = 5;
+            this.gbRecommendations.TabIndex = 4;
             this.gbRecommendations.TabStop = false;
             this.gbRecommendations.Text = "Recommendations";
             // 

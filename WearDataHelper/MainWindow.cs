@@ -49,7 +49,7 @@ namespace WearDataHelper
                 gbPart.Location = new Point(8 + xOffset, yPos);
 
                 PictureBox pictureBox = new PictureBox();
-                pictureBox.Tag = count++;
+                pictureBox.Tag = attrib.Count = count++;
                 pictureBox.AllowDrop = true;
                 pictureBox.Dock = DockStyle.Fill;
                 pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
@@ -109,6 +109,8 @@ namespace WearDataHelper
                             if (col == 4)
                                 listAttributes[row - 1].Notes = columnText;
                             if (col == 5)
+                                listAttributes[row - 1].Recommendations = columnText;
+                            if (col == 6)
                                 listAttributes[row - 1].DateOverhaul = columnText;
                             col++;
                         }
@@ -176,6 +178,17 @@ namespace WearDataHelper
             pgAttributes.SelectedObject = listAttributes[(int)pb.Tag];
         }
 
+        private void SaveAttributes()
+        {
+            foreach (PumpAttributes attrib in listAttributes)
+            {
+                attrib.DateOverhaul = dtpOH.Value.ToShortDateString();
+                attrib.PartUniqueID = $"{dtpOH.Value.ToString("yyyyMM")} {txtAssetNum.Text.Trim()} {attrib.PartName}";
+                attrib.WorkOrderNumber = txtWorkOrderNum.Text;
+                attrib.Recommendations = txtRecommedations.Text;
+            }
+        }
+
         private void btnRename_Click(object sender, EventArgs e)
         {
             // error checking
@@ -200,10 +213,7 @@ namespace WearDataHelper
                 if (File.Exists(attrib.ImageFilePath))
                 {
                     string fpOld = attrib.ImageFilePath;
-                    attrib.DateOverhaul = dtpOH.Value.ToShortDateString();
-                    attrib.PartUniqueID = $"{dtpOH.Value.ToString("yyyyMM")} {txtAssetNum.Text.Trim()} {attrib.PartName}";
-                    attrib.WorkOrderNumber = txtWorkOrderNum.Text;
-                    attrib.Recommendations = txtRecommedations.Text;
+                    SaveAttributes();
                     string fpNew = $"{Path.Combine(dirPumpGroup, attrib.PartUniqueID)}{Path.GetExtension(fpOld)}";
 
                     if (File.Exists(fpNew))
@@ -243,6 +253,8 @@ namespace WearDataHelper
 
             if (File.Exists(fpCsv)) File.Delete(fpCsv);
 
+            SaveAttributes();
+
             using (StreamWriter sw = new StreamWriter(fpCsv))
             {
                 CsvSerializer.Serialize<PumpAttributes>(sw, listAttributes);
@@ -257,6 +269,9 @@ namespace WearDataHelper
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 ReadCsv(dlg.FileName);
+                txtAssetNum.Text = Path.GetFileNameWithoutExtension(dlg.FileName);
+                dirPumpGroup = Path.GetDirectoryName(dlg.FileName);
+                txtRecommedations.Text = listAttributes[0].Recommendations;
             }
         }
 
@@ -268,6 +283,10 @@ namespace WearDataHelper
         private void dtpOH_ValueChanged(object sender, EventArgs e)
         {
             UpdateDirPumpGroup();
+        }
+
+        private void pgAttributes_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
         }
     }
 }

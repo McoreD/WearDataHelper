@@ -16,13 +16,17 @@ namespace WearDataHelper
 
         [Description("Pump Service Life in hours")]
         public string PumpServiceLife { get; set; }
+
         public string Notes { get; set; }
+
+        [Browsable(false)]
         public string Recommendations { get; set; }
 
         [Browsable(false)]
         public string DateOverhaul { get; set; }
 
-        internal string PartName { get; set; }
+        public string PartName { get; set; }
         internal string ImageFilePath { get; set; }
+        internal int Count { get; set; }
     }
 }
