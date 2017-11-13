@@ -1,104 +1,84 @@
 ﻿Sub UpdatePictures()
 
-    Dim strPumpName As String
-
-    Dim dirPictures As String 'dir path of pictures
-    Dim dirPicturesSubDir As String
-
-    Const rowPhotoNameStart As Integer = 19
-    Dim rowPhotoName As Integer
-    Dim colPhotoName As Integer
     Dim pictureName As String 'picture name
+    Dim dirPictures As String 'dir path of pictures
 
+    Dim dirPicturesSubDir As String
+    Dim strPumpName As String
+    Dim strPumpGroupName As String
+    Dim strDate As String
+    Dim pathPumpPhoto As String
     Dim pathPicture As String 'file path of picture
 
-    rowPhotoName = 19
-    colPhotoName = 1
+    Dim rowPhotoName As Integer
+    Dim colPhotoName As Integer
 
     Application.ScreenUpdating = False
 
-    Worksheets("Check List Report").Activate
+    strDate = Year(Worksheets("Check List Report").Cells(6, 12).Value) & "-" & Format(Month(Worksheets("Check List Report").Cells(6, 12).Value), "00")
+    strPumpName = ActiveSheet.Cells(6, 7).Value
+    strPumpGroupName = ActiveSheet.Cells(7, 9).Value
 
-    strPumpName = ActiveSheet.Cells(9, 2).Value
-    Worksheets("CSV").Cells.ClearContents
+    dirPicturesSubDir = strDate & "\" & strPumpName
+    dirPictures = ActiveWorkbook.Path + "\Photos\" + dirPicturesSubDir + "\" 'important to end with a "\"
 
-    For rowPhotoName = 19 To 54 Step 7
+    pathPumpPhoto = ActiveWorkbook.Path + "\Config\" & strPumpGroupName & "\" & strPumpName & ".jpg"
 
-        For colPhotoName = 1 To 11 Step 5
+    Call InsertPicture(pathPumpPhoto, ActiveSheet.Cells(26, 1))
 
-            dirPicturesSubDir = Year(Worksheets("Check List Report").Cells(18, colPhotoName + 1).Value) & "-" &
-            Format(Month(Worksheets("Check List Report").Cells(18, colPhotoName + 1).Value), "00") & "\" &
-            Worksheets("Check List Report").Cells(9, 2).Value
+    For rowPhotoName = 19 To 31 Step 6
 
-            dirPictures = ActiveWorkbook.Path + "\Photos\" + dirPicturesSubDir + "\" 'important to end with a "\"
+        For colPhotoName = 6 To 11 Step 5
 
             pictureName = Worksheets("Check List Report").Cells(rowPhotoName, colPhotoName).Value
-
-            If (rowPhotoName = 19) Then ' Do only once
-
-                Dim csvRow As Integer
-                Select Case colPhotoName
-                    Case 1
-                        csvRow = 1
-                    Case 6
-                        csvRow = 11
-                    Case 11
-                        csvRow = 21
-                End Select
-
-                Call ImportCSV(dirPictures & strPumpName & ".csv", csvRow)
-
-            End If
 
             If (pictureName <> vbNullString) Then
 
                 pathPicture = dirPictures & pictureName & ".jpg"
 
-                If FileExists(pathPicture) Then
+                Dim rowPhoto As Integer
+                rowPhoto = rowPhotoName + 1
+                ActiveSheet.Cells(rowPhoto, colPhotoName).Select
+                DeletePicture(Cells(rowPhoto, colPhotoName))
 
-                    Dim rowPhoto As Integer
-                    rowPhoto = rowPhotoName + 1
-
-                    ActiveSheet.Cells(rowPhoto, colPhotoName).Select
-
-                    DeletePicture(Cells(rowPhoto, colPhotoName))
-
-                    With ActiveSheet.Pictures.Insert(pathPicture)
-                        With .ShapeRange
-                            .LockAspectRatio = msoTrue
-                            '.Width = 30
-                            .Height = 132
-                            .Rotation = 0
-                        End With
-                        .Left = ActiveSheet.Cells(rowPhoto, colPhotoName).Left
-                        .Top = ActiveSheet.Cells(rowPhoto, colPhotoName).Top
-                        .Placement = 1
-                        .PrintObject = True
-                    End With
-
-                End If
+                Call InsertPicture(pathPicture, ActiveSheet.Cells(rowPhoto, colPhotoName))
 
             End If
-
 
         Next
 
     Next
 
+    ImportCSV(dirPictures & strPumpName & ".csv")
 
 Exit_Sub:
 
-    Cells(1, 1).Select
     Application.ScreenUpdating = True
     Exit Sub
 
-
     GoTo Exit_Sub
-
-
 
 End Sub
 
+Sub InsertPicture(pathPicture As String, target As Range)
+
+    If FileExists(pathPicture) Then
+
+        With ActiveSheet.Pictures.Insert(pathPicture)
+            With .ShapeRange
+                .LockAspectRatio = msoTrue
+                .Height = 125
+                .Rotation = 0
+            End With
+            .Left = target.Left
+            .Top = target.Top
+            .Placement = 1
+            .PrintObject = True
+        End With
+
+    End If
+
+End Sub
 
 Sub DeletePicture(curcell As Range)
 
@@ -113,8 +93,7 @@ Err_DeletePicture:
     Exit Sub
 End Sub
 
-
-Sub ImportCSV(filePath As String, rowFirstCell As Integer)
+Sub ImportCSV(filePath As String)
 
     Dim rFirstCell As Range 'Points to the First Cell in the row currently being updated
     Dim rCurrentCell As Range 'Points the the current cell in the row being updated
@@ -124,11 +103,14 @@ Sub ImportCSV(filePath As String, rowFirstCell As Integer)
     Dim sValue As String 'Individual comma delimited value
 
     If Not FileExists(filePath) Then Exit Sub
-        
+
+    'Clear Existing Data
+    Worksheets("CSV").Cells.ClearContents
+
 'Set initial values for Range Pointers
-    Set rFirstCell = Worksheets("CSV").Cells(rowFirstCell, 1)
+    Set rFirstCell = Worksheets("CSV").Cells(1, 1)
     Set rCurrentCell = rFirstCell
-    
+
 'Get an available file number
     iFileNo = FreeFile()
 
@@ -150,14 +132,14 @@ Sub ImportCSV(filePath As String, rowFirstCell As Integer)
             End If
 
         Loop Until sValue = ""
-        
+
         Set rFirstCell = rFirstCell.Offset(1, 0) 'move pointer down one row
         Set rCurrentCell = rFirstCell 'set output pointer to next line
     Loop
 
     'Close the Text File
     Close #iFileNo
-    
+
 End Sub
 
 Private Function ParseData(sData As String, sDelim As String) As String
@@ -178,4 +160,3 @@ Private Function ParseData(sData As String, sDelim As String) As String
     End If
 
 End Function
-

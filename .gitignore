@@ -287,13 +287,10 @@ __pycache__/
 *.odx.cs
 *.xsd.cs
 
-# ShareX
+# App
 Output/
 ShareX.UploadersLib/APIKeys/APIKeysLocal.cs
 Lib/ffmpeg.exe
 Lib/ffmpeg-x64.exe
 *.ide
-.vs/WearDataHelper/v15/.suo
-*.ide
-.vs/WearDataHelper/v15/.suo
-*.ide
+*.suo
